@@ -1,0 +1,37 @@
+language: python
+
+python:
+  - "2.6"
+  - "2.7"
+
+install: echo "begin install"
+
+script: echo "deploying best cat site ever" && true
+
+before_deploy:
+  - zip -r latest *
+  - mkdir -p cat-site
+  - mv latest.zip cat-site/latest.zip
+
+deploy:
+  - provider: s3
+    access_key_id: $TRAVIS_AWS_ACCESS_KEY
+    secret_access_key: &1
+      secure: $TRAVIS_AWS_SECRET_KEY
+    local_dir: cat-site
+    skip_cleanup: true
+    acl: public_read
+    region: eu-west-1
+    on: &2
+      repo: saidsef/aws-codedeploy-travis-ci-demo
+    bucket: aws-websites
+    key: cats
+  - provider: codedeploy
+    access_key_id: $TRAVIS_AWS_ACCESS_KEY
+    secret_access_key: *1
+    bucket: aws-websites
+    key: cats/latest.zip
+    bundle_type: zip
+    application: BestCatSiteApplication
+    deployment_group: CatSiteFleet
+    on: *2
