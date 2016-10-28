@@ -4,6 +4,13 @@ python:
   - "2.6"
   - "2.7"
 
+git:
+  depth: 10
+
+branches:
+  only:
+    - master
+
 install: echo "begin install"
 
 script: echo "deploying best cat site ever" && true
@@ -35,3 +42,8 @@ deploy:
     application: BestCatSiteApplication
     deployment_group: CatSiteFleet
     on: *2
+
+notifications:
+  email:
+    on_success: never
+    on_failure: change
